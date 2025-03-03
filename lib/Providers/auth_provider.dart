@@ -15,7 +15,6 @@ class AuthProvider with ChangeNotifier {
     }
     return success;
   }
-
   Future<bool> register(String name, String email, String password) async {
     return await _authService.register(name, email, password);
   }
