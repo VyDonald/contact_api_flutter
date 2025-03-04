@@ -7,7 +7,6 @@ class ContactDialog extends StatefulWidget {
   final Contact? contact;
 
   ContactDialog({this.contact});
-
   @override
   _ContactDialogState createState() => _ContactDialogState();
 }
@@ -25,9 +24,9 @@ class _ContactDialogState extends State<ContactDialog> {
     _prenomController = TextEditingController(text: widget.contact?.prenom ?? '');
     _selectedGroupe = widget.contact?.groupeId ?? 1;
   }
-
   @override
   Widget build(BuildContext context) {
+    double screenwidth = MediaQuery.of(context).size.width;
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Padding(
@@ -98,6 +97,15 @@ class _ContactDialogState extends State<ContactDialog> {
                           provider.addContact(newContact);
                         } else {
                           provider.updateContact(widget.contact!.id!, newContact);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("Modifié avec succès !!", style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: screenwidth*0.05,
+                            ),
+                            ),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
                         }
                         Navigator.pop(context);
                       }

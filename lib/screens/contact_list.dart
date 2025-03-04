@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../Providers/Contacts_Provider.dart';
@@ -16,6 +17,8 @@ class _ContactListScreenState extends State<ContactListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double screenwidth = MediaQuery.of(context).size.width;
+    //double screenheight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(title: Text("Mes Contacts",
         style: GoogleFonts.sanchez(
@@ -24,6 +27,9 @@ class _ContactListScreenState extends State<ContactListScreen> {
         ),
       ),
         centerTitle: true,
+        bottom: PreferredSize(preferredSize: Size(20, 30),
+          child: Padding(padding: EdgeInsets.zero),
+        ),
         actions: [
           PopupMenuButton<int>(
             iconColor: Colors.red,
@@ -100,17 +106,58 @@ class _ContactListScreenState extends State<ContactListScreen> {
                   children: [
                     IconButton(
                       icon: Icon(Icons.edit, color: Colors.green),
-                      onPressed: () {
+                      onPressed: () async{
                         showDialog(
                           context: context,
-                          builder: (_) => ContactDialog(contact: contact),
-                        );
+                          builder: (context) => ContactDialog(contact: contact),
+                           );
                       },
                     ),
                     IconButton(
                       icon: Icon(Icons.delete, color: Colors.red),
                       onPressed: () {
-                        provider.deleteContact(contact.id!);
+                        showDialog(context: context, builder: (context){
+                          return AlertDialog(
+                            title: Text("Voulez vous vraiment supprimmer ???", style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),) ,
+                            icon: Icon(Icons.warning, size: screenwidth*0.2, color: Colors.red,),
+
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: Text("NON", style: GoogleFonts.interTight(
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold,
+                                ),),
+                              ),
+                              SizedBox(width: screenwidth*0.3,),
+                              TextButton(
+                                onPressed: () async{
+
+                                await  provider.deleteContact(contact.id!);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text("Contact supprimé !!", style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: screenwidth*0.05,
+                                    ),
+                                    ),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                );
+                                Navigator.pop(context);
+                                },
+                                child: Text("OUI", style: GoogleFonts.interTight(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+
+                        );
                       },
                     ),
                   ],
